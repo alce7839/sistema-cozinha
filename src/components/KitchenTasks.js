@@ -97,42 +97,57 @@ function KitchenTasks() {
     setTaskObservation('');
   };
 
-  const updateTaskStatus = (taskId, newStatus) => {
-    if (newStatus === 'concluida') {
-      const note = window.prompt('Adicione uma observação sobre a conclusão da tarefa:');
-      if (note === null) return;
-
-      const taskToComplete = tasks.find(task => task.id === taskId);
-      if (taskToComplete) {
-        const completedTask = {
-          ...taskToComplete,
+ // src/components/KitchenTasks.js
+const updateTaskStatus = (taskId, newStatus) => {
+  if (newStatus === 'em_execucao') {
+    // Quando a tarefa é iniciada, registra o horário de início
+    setTasks(tasks.map(task => {
+      if (task.id === taskId) {
+        return {
+          ...task,
           status: newStatus,
-          completedAt: new Date().toISOString(),
-          assignedTo: taskToComplete.assignedTo || userName,
-          completionNote: note
+          startedAt: new Date().toISOString(),
+          assignedTo: userName
         };
-
-        // Adiciona ao histórico
-        setTasksHistory(prev => [...prev, completedTask]);
-        
-        // Atualiza a lista de tarefas ativas
-        setTasks(tasks.map(task => 
-          task.id === taskId ? completedTask : task
-        ));
       }
-    } else {
-      setTasks(tasks.map(task => {
-        if (task.id === taskId) {
-          return {
-            ...task,
-            status: newStatus,
-            assignedTo: newStatus === 'em_execucao' ? userName : task.assignedTo
-          };
-        }
-        return task;
-      }));
+      return task;
+    }));
+  } else if (newStatus === 'concluida') {
+    // Quando a tarefa é concluída
+    const note = window.prompt('Adicione uma observação sobre a conclusão da tarefa:');
+    if (note === null) return;
+
+    const taskToComplete = tasks.find(task => task.id === taskId);
+    if (taskToComplete) {
+      const completedTask = {
+        ...taskToComplete,
+        status: newStatus,
+        completedAt: new Date().toISOString(),
+        assignedTo: taskToComplete.assignedTo || userName,
+        completionNote: note
+      };
+
+      // Adiciona ao histórico
+      setTasksHistory(prev => [...prev, completedTask]);
+      
+      // Atualiza a lista de tarefas ativas
+      setTasks(tasks.map(task => 
+        task.id === taskId ? completedTask : task
+      ));
     }
-  };
+  } else {
+    setTasks(tasks.map(task => {
+      if (task.id === taskId) {
+        return {
+          ...task,
+          status: newStatus,
+          assignedTo: newStatus === 'em_execucao' ? userName : task.assignedTo
+        };
+      }
+      return task;
+    }));
+  }
+};
 
   const deleteTask = (taskId) => {
     setTasks(tasks.filter(task => task.id !== taskId));
@@ -159,6 +174,7 @@ function KitchenTasks() {
     return (
       <ReportView 
         tasks={tasks}
+        tasksHistory={tasksHistory} 
         setShowReport={setShowReport}
       />
     );

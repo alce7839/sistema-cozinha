@@ -2,6 +2,7 @@
 import React from 'react';
 import { Calendar, Trash2 } from 'lucide-react';
 import { filterByPeriod } from '../utils/dateUtils';
+import { calculateDuration } from '../utils/dateUtils';
 
 function HistoryView({ tasksHistory, setTasksHistory, setShowHistory, startDate, setStartDate, endDate, setEndDate }) {
   const handleDeleteByPeriod = () => {
@@ -81,15 +82,18 @@ function HistoryView({ tasksHistory, setTasksHistory, setShowHistory, startDate,
                     {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
                   </span>
                 </div>
-                <div className="history-card-details">
-                  <p>Concluída por: {task.assignedTo}</p>
-                  <p>Em: {new Date(task.completedAt).toLocaleString()}</p>
-                  {task.completionNote && (
-                    <p className="history-note">
-                      <strong>Observação:</strong> {task.completionNote}
-                    </p>
-                  )}
-                </div>
+<div className="history-card-details">
+  <p>Concluída por: {task.assignedTo}</p>
+  <p>Em: {new Date(task.completedAt).toLocaleString()}</p>
+  {task.startedAt && task.completedAt && (
+    <p><strong>Tempo de execução:</strong> {calculateDuration(task.startedAt, task.completedAt)}</p>
+  )}
+  {task.completionNote && (
+    <p className="history-note">
+      <strong>Observação:</strong> {task.completionNote}
+    </p>
+  )}
+</div>
               </div>
             ))
           ) : (

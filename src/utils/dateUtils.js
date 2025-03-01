@@ -1,3 +1,4 @@
+
 // src/utils/dateUtils.js
 export const formatDate = (dateString) => {
     return new Date(dateString).toLocaleString();
@@ -33,3 +34,34 @@ export const formatDate = (dateString) => {
       return taskDate >= start && taskDate <= end;
     }).sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
   };
+
+  // src/utils/dateUtils.js - Adicione esta função
+export const calculateDuration = (startDateString, endDateString) => {
+  const start = new Date(startDateString);
+  const end = new Date(endDateString);
+  
+  const diffMs = end - start;
+  const diffSeconds = Math.floor(diffMs / 1000);
+  
+  if (diffSeconds < 60) {
+    return `${diffSeconds} segundos`;
+  }
+  
+  const diffMinutes = Math.floor(diffSeconds / 60);
+  if (diffMinutes < 60) {
+    const remainingSeconds = diffSeconds % 60;
+    return `${diffMinutes} min ${remainingSeconds} seg`;
+  }
+  
+  const diffHours = Math.floor(diffMinutes / 60);
+  const remainingMinutes = diffMinutes % 60;
+  
+  if (diffHours < 24) {
+    return `${diffHours}h ${remainingMinutes}min`;
+  }
+  
+  const diffDays = Math.floor(diffHours / 24);
+  const remainingHours = diffHours % 24;
+  
+  return `${diffDays}d ${remainingHours}h ${remainingMinutes}min`;
+};
